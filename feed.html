@@ -1,0 +1,10 @@
+{{ range $_, $item := . }}
+<div id="{{ $item.SanitizedURL }}" class="block item flex">
+    <h2 class="title hide-overflow">
+        <a href="{{ $item.URL }}" target="_blank" onclick="markAsRead('{{ $item.SanitizedURL}}'); return true;">
+            {{ $item.Label }}
+        </a>
+    </h2>
+    <p class="dismiss pointer" onclick="markAsRead('{{ $item.SanitizedURL}}'); return true;">Dismiss</p>
+</div>
+{{ end }}

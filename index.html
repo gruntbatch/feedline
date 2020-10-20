@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>feedline</title>
+
+    <style>
+        * {
+            color: #111111;
+            padding: 0;
+            margin: 0;
+            font-family: sans-serif;
+            font-weight: lighter;
+            text-decoration: none;
+            list-style: none;
+        }
+
+        body {
+            max-width: 768px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        #header {
+            position: sticky;
+            top: 0;
+            background: white;
+        }
+
+        #header>*,
+        #feed>*:not(:last-child) {
+            border-bottom: 1px solid;
+        }
+
+        .hide-overflow {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .flex {
+            align-items: center;
+            display: flex;
+        }
+
+        .flex>*:not(:last-child) {
+            margin-right: 0.75rem;
+        }
+
+        .flex>*:last-child {
+            margin-left: auto;
+        }
+
+        .item {
+            box-sizing: border-box;
+            height: 5rem;
+        }
+
+        .message {
+            height: calc(100vh - 5rem);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .message>*:first-child {
+            margin-top: 6rem;
+        }
+
+        .pointer {
+            cursor: pointer;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .dismiss {
+                opacity: 0%;
+                transition: opacity 0.2s;
+            }
+
+            .item:hover .dismiss {
+                opacity: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <div class="block item flex">
+            <h1 class="title"><a href="/">feedline</a></h1>
+            <ul class="flex">
+                <li onclick="refreshFeed(); return true;" class="pointer">Refresh</li>
+            </ul>
+        </div>
+    </div>
+    <div id="feed">
+    </div>
+    <div id="spacer"></div>
+    <script>
+        var feed = document.querySelector("#feed");
+        function markAsRead(url) {
+            fetch("/api/dismiss/?url=" + url, {
+                method: 'POST'
+            });
+            var items = feed.querySelectorAll('#' + url);
+            for (let item of items) {
+                feed.removeChild(item);
+            }
+            if (!feed.childElementCount) {
+                refreshFeed();
+            }
+        }
+        function refreshFeed() {
+            feed.innerHTML = `<div class="message">
+                <h2>Refreshing your feed</h2>
+                <p>Won't take long</p>
+            </div>`;
+            fetch("/api/feed/")
+                .then(response => response.text())
+                .then(html => showFeed(html));
+        }
+        function showFeed(html) {
+            feed = document.getElementById("feed");
+            if (html) {
+                feed.innerHTML = html;
+            } else {
+                feed.innerHTML = `<div class="message">
+                    <h2>Nothing to see here</h2>
+                    <p>Move along, move along</p>
+                </div>`;
+            }
+        }
+        refreshFeed()
+    </script>
+</body>
+
+</html>
