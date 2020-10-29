@@ -1,7 +1,9 @@
 {{ range $_, $item := . }}
 <div id="{{ $item.SanitizedURL }}" class="block item flex">
     <h2 class="title hide-overflow">
-        <a href="{{ $item.URL }}" target="_blank" onclick="markAsRead('{{ $item.SanitizedURL}}'); return true;">
+        <a href="{{ $item.URL }}" target="_blank" title="{{ $item.Label }}"
+            onclick="markAsRead('{{ $item.SanitizedURL}}'); return true;">
+            <img src="https://s2.googleusercontent.com/s2/favicons?domain_url={{ $item.URL }}">
             {{ $item.Label }}
         </a>
     </h2>
