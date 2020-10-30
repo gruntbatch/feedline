@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-func parseURL(fp *gofeed.Parser, URL string) []Item {
-	rss, err := fp.ParseURL(URL)
+func updateSubscription(fp *gofeed.Parser, sub *Subscription) []Item {
+	rss, err := fp.ParseURL(sub.URL)
 	if err != nil {
 		return nil
 	}
@@ -22,7 +22,7 @@ func parseURL(fp *gofeed.Parser, URL string) []Item {
 		} else if item.UpdatedParsed != nil {
 			date = *item.UpdatedParsed
 		}
-		items = append(items, Item{item.Title, item.Link, sanitize.BaseName(item.Link), date})
+		items = append(items, Item{*sub, item.Title, item.Link, sanitize.BaseName(item.Link), date})
 	}
 
 	return items
@@ -35,7 +35,7 @@ func AllItems() []Item {
 
 	fp := gofeed.NewParser()
 	for _, sub := range subs {
-		items = append(items, parseURL(fp, sub.URL)...)
+		items = append(items, updateSubscription(fp, &sub)...)
 	}
 
 	sort.Slice(items, func(i, j int) bool { return items[i].Date.After(items[j].Date) })
@@ -44,7 +44,7 @@ func AllItems() []Item {
 }
 
 func (s *Subscription) AllItems() []Item {
-	items := parseURL(gofeed.NewParser(), s.URL)
+	items := updateSubscription(gofeed.NewParser(), s)
 	sort.Slice(items, func(i, j int) bool { return items[i].Date.After(items[j].Date) })
 	return items
 }
