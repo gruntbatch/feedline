@@ -1,38 +1,72 @@
 package feed
 
 import (
+	"errors"
 	"feedline/lib/opml"
 	"github.com/kennygrant/sanitize"
 	"os"
 	"time"
 )
 
-func All() []Item {
-	// TODO Load the subscription file only if it has changed
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return nil
-	}
-
-	// TODO Load the subscription file from a configured directory
-	opmlSubs, err := opml.Load(homeDir + "/.feedline/subscriptions.opml")
-	if err != nil {
-		return nil
-	}
-
-	feeds := flattenFeeds(opmlSubs.Body.Outlines)
-	return feeds
+type Subscription struct {
+	Label        string
+	URL          string
+	SanitizedURL string
 }
 
-func flattenFeeds(outlines []opml.Outline) []Item {
-	var feeds []Item
+func FindSubscriptionBySanitizedURL(URL string) (Subscription, error) {
+	subs := Subscriptions()
+
+	for _, sub := range subs {
+		if sub.SanitizedURL == URL {
+			return sub, nil
+		}
+	}
+
+	return Subscription{}, errors.New("unable to find subscription")
+}
+
+var Subscriptions = func() (Subscriptions func() []Subscription) {
+	lastModTime := time.Unix(0, 0)
+	var subs []Subscription
+
+	return func() []Subscription {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return nil
+		}
+		// TODO Load the subscription file from a configured directory
+		name := home + "/.feedline/subscriptions.opml"
+
+		stat, err := os.Stat(name)
+		if err != nil {
+			return nil
+		}
+
+		if lastModTime == stat.ModTime() {
+			return subs
+		}
+		lastModTime = stat.ModTime()
+
+		opmlSubs, err := opml.Load(name)
+		if err != nil {
+			return nil
+		}
+
+		subs = flattenSubs(opmlSubs.Body.Outlines)
+		return subs
+	}
+}()
+
+func flattenSubs(outlines []opml.Outline) []Subscription {
+	var subs []Subscription
 	for _, o := range outlines {
 		if o.Type == "rss" {
-			feeds = append(feeds, Item{o.Text, o.XMLURL, sanitize.BaseName(o.XMLURL), time.Unix(0, 0)})
+			subs = append(subs, Subscription{o.Text, o.XMLURL, sanitize.BaseName(o.XMLURL)})
 		}
-		feeds = append(feeds, flattenFeeds(o.Outlines)...)
+		subs = append(subs, flattenSubs(o.Outlines)...)
 	}
-	return feeds
+	return subs
 }
 
 func Follow() {

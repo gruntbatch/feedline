@@ -29,20 +29,3 @@ func MarkAsRead(URL string) {
 		}
 	}
 }
-
-func FilterRead(items []Item) []Item {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		panic(err)
-	}
-
-	var filtered []Item
-	for _, item := range items {
-		_, err = os.Stat(homeDir + "/.feedline/read/" + sanitize.BaseName(item.URL))
-		if os.IsNotExist(err) {
-			filtered = append(filtered, item)
-		}
-	}
-
-	return filtered
-}

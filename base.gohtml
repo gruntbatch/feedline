@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>feedline</title>
+    <title>{{ block "title" . }}{{ end }}</title>
 
     <style>
         * {
@@ -94,49 +94,14 @@
         <div class="block item flex">
             <h1 class="title"><a href="/">feedline</a></h1>
             <ul class="flex">
-                <li onclick="refreshFeed(); return true;" class="pointer">Refresh</li>
+                {{ block "navigation" . }}{{ end }}
             </ul>
         </div>
     </div>
     <div id="feed">
+        {{ block "content" . }}{{ end }}
     </div>
     <div id="spacer"></div>
-    <script>
-        var feed = document.querySelector("#feed");
-        function markAsRead(url) {
-            fetch("/api/dismiss/?url=" + url, {
-                method: 'POST'
-            });
-            var items = feed.querySelectorAll('#' + url);
-            for (let item of items) {
-                feed.removeChild(item);
-            }
-            if (!feed.childElementCount) {
-                refreshFeed();
-            }
-        }
-        function refreshFeed() {
-            feed.innerHTML = `<div class="message">
-                <h2>Refreshing your feed</h2>
-                <p>Won't take long</p>
-            </div>`;
-            fetch("/api/feed/")
-                .then(response => response.text())
-                .then(html => showFeed(html));
-        }
-        function showFeed(html) {
-            feed = document.getElementById("feed");
-            if (html) {
-                feed.innerHTML = html;
-            } else {
-                feed.innerHTML = `<div class="message">
-                    <h2>Nothing to see here</h2>
-                    <p>Move along, move along</p>
-                </div>`;
-            }
-        }
-        refreshFeed()
-    </script>
 </body>
 
 </html>

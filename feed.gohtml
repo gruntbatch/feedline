@@ -1,0 +1,35 @@
+{{ define "title" }}Feed{{ end }}
+
+{{ define "navigation" }}
+    <ul><a href="/subscriptions">Subscriptions</a></ul>
+{{ end }}
+
+{{ define "content" }}
+    {{ range $_, $item := . }}
+    <div id="{{ $item.SanitizedURL }}" class="block item flex">
+        <h2 class="title hide-overflow">
+            <a href="{{ $item.URL }}" target="_blank" title="{{ $item.Label }}"
+                onclick="markAsRead('{{ $item.SanitizedURL}}'); return true;">
+                <img src="https://s2.googleusercontent.com/s2/favicons?domain_url={{ $item.URL }}">
+                {{ $item.Label }}
+            </a>
+        </h2>
+        <p class="dismiss pointer" onclick="markAsRead('{{ $item.SanitizedURL}}'); return true;">Dismiss</p>
+    </div>
+    {{ end }}
+    <script>
+        var feed = document.querySelector("#feed");
+        function markAsRead(url) {
+            fetch("/api/dismiss/?url=" + url, {
+                method: 'POST'
+            });
+            var items = feed.querySelectorAll('#' + url);
+            for (let item of items) {
+                feed.removeChild(item);
+            }
+            if (!feed.childElementCount) {
+                refreshFeed();
+            }
+        }
+    </script>
+{{ end }}

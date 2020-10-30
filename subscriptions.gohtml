@@ -1,0 +1,18 @@
+{{ define "title" }}Subscriptions{{ end }}
+
+{{ define "navigation" }}
+    <ul><a href="/">Feed</a></ul>
+{{ end }}
+
+{{ define "content" }}
+    {{ range $_, $subscription := . }}
+    <div class="block item flex">
+        <h2 class="title hide-overflow">
+            <a href="/?feed={{ $subscription.SanitizedURL }}">
+                {{ $subscription.Label }}
+            </a>
+        </h2>
+        <p></p>
+    </div>
+    {{ end }}
+{{ end }}
