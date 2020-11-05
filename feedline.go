@@ -1,9 +1,12 @@
 package main
 
 import (
+	"feedline/lib/receiver"
 	"feedline/lib/server"
 )
 
 func main() {
-	server.Serve(":8080")
+	go receiver.Refresh()
+	go receiver.Listen()
+	server.Serve("localhost:8579")
 }

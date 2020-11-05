@@ -1,37 +1,38 @@
 {{ define "navigation" }}
-    <ul><a href="/subscriptions">Subscriptions</a></ul>
+<ul><a href="/subscriptions/">Subscriptions</a></ul>
 {{ end }}
 
 {{ define "content" }}
-    {{ range $_, $item := . }}
-    <div id="{{ $item.SanitizedURL }}" class="block item flex">
-        <h2 class="title">
-            <a href="/?feed={{ $item.Subscription.SanitizedURL }}">
-                {{ $item.Subscription.Label }}
-            </a>
-        </h2>
-        <h3 class="title hide-overflow">
-            <a href="{{ $item.URL }}" target="_blank" title="{{ $item.Label }}"
-                onclick="markAsRead('{{ $item.SanitizedURL}}'); return true;">
-                {{ $item.Label }}
-            </a>
-        </h3>
-        <p class="dismiss pointer" onclick="markAsRead('{{ $item.SanitizedURL}}'); return true;">Dismiss</p>
-    </div>
-    {{ end }}
-    <script>
-        var feed = document.querySelector("#feed");
-        function markAsRead(url) {
-            fetch("/api/dismiss/?url=" + url, {
-                method: 'POST'
-            });
-            var items = feed.querySelectorAll('#' + url);
-            for (let item of items) {
-                feed.removeChild(item);
-            }
-            if (!feed.childElementCount) {
-                refreshFeed();
-            }
+{{ range $_, $item := . }}
+<div id="{{ $item.SanitizedURL }}" class="block item flex">
+    <h2 class="title">
+        <a href="/?url={{ $item.ChannelInfo.SanitizedURL }}">
+            {{ $item.ChannelInfo.Label }}
+        </a>
+    </h2>
+    <h3 class="title hide-overflow">
+        <a href="{{ $item.URL }}" target="_blank" title="{{ $item.Label }}"
+            onclick="markAsRead('{{ $item.SanitizedURL}}'); return true;">
+            {{ $item.Label }}
+        </a>
+    </h3>
+    <p class="dismiss pointer" onclick="markAsRead('{{ $item.SanitizedURL}}');">Dismiss</p>
+</div>
+{{ end }}
+<script>
+    setInterval(() => { location.reload(); }, 600000)
+    var feed = document.querySelector("#feed");
+    function markAsRead(url) {
+        fetch("/api/dismiss/?url=" + url, {
+            method: "POST"
+        });
+        var items = feed.querySelectorAll('#' + url);
+        for (let item of items) {
+            feed.removeChild(item);
         }
-    </script>
+        if (!feed.childElementCount) {
+            refreshFeed();
+        }
+    }
+</script>
 {{ end }}

@@ -3,11 +3,11 @@
 {{ end }}
 
 {{ define "content" }}
-    {{ range $_, $subscription := . }}
+    {{ range $_, $channel := . }}
     <div class="block item flex">
         <h2 class="title hide-overflow">
-            <a href="/?feed={{ $subscription.SanitizedURL }}">
-                {{ $subscription.Label }}
+            <a href="/?url={{ $channel.SanitizedURL }}">
+                {{ $channel.Label }}
             </a>
         </h2>
         <p></p>
