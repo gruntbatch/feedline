@@ -1,7 +1,7 @@
 feedline
 ========
 
-What is the simplest hack that will result in a fully functional RSS reader, complete with a web interface and sync capabilities? It's _feedline_!
+What is the simplest hack that will result in a fully functional, highly opinionated RSS reader, complete with a web interface? It's _feedline_!
 
 Setup
 -----
@@ -10,4 +10,4 @@ _feedline_ looks for a `.feedline` folder in your home directory. It expects to 
 
 The `.feedline` folder is designed to be synced using services such as Dropbox or iCloud, or even a self-hosted solution, such as Syncthing.
 
-After building the `feedline` executable, launch it and run it in the background. Navigating to `localhost:8080` will get you your RSS feed.
+After building the `feedline` executable, launch it and run it in the background. If the templates and the executable are seperated, you'll need to supply the `-templatedir` flag. You can tell the program what address to use with the `-addr` flag.

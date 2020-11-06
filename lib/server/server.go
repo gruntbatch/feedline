@@ -5,14 +5,18 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"path"
 )
 
-func Serve(address string) {
+var templateDir string
+
+func Serve(_templateDir string, addr string) {
+	templateDir = _templateDir
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/subscriptions/", handleSubscriptions)
 	http.HandleFunc("/api/dismiss/", handleDismiss)
 	http.HandleFunc("/api/refresh/", handleRefresh)
-	log.Fatal(http.ListenAndServe(address, nil))
+	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
@@ -27,7 +31,9 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 	}
-	t := template.Must(template.ParseFiles("base.gohtml", "feed.gohtml"))
+	t := template.Must(template.ParseFiles(
+		path.Join(templateDir, "base.gohtml"),
+		path.Join(templateDir, "feed.gohtml")))
 	if err := t.Execute(w, bulletins); err != nil {
 		panic(err)
 	}
@@ -35,7 +41,9 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 func handleSubscriptions(w http.ResponseWriter, r *http.Request) {
 	channels := receiver.AllChannels()
-	t := template.Must(template.ParseFiles("base.gohtml", "channels.gohtml"))
+	t := template.Must(template.ParseFiles(
+		path.Join(templateDir, "base.gohtml"),
+		path.Join(templateDir, "channels.gohtml")))
 	if err := t.ExecuteTemplate(w, "base.gohtml", channels); err != nil {
 		panic(err)
 	}
