@@ -1,7 +1,7 @@
 package receiver
 
 import (
-	"feedline/lib/opml"
+	"feedline/pkg/opml"
 	"github.com/kennygrant/sanitize"
 	"github.com/mmcdole/gofeed"
 	"os"

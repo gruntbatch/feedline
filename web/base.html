@@ -9,6 +9,7 @@
 
     <style>
         * {
+            background-color: #fffff8;
             color: #111111;
             padding: 0;
             margin: 0;
@@ -16,6 +17,13 @@
             font-weight: lighter;
             text-decoration: none;
             list-style: none;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            * {
+                background-color: #111111;
+                color: #fffff8;
+            }
         }
 
         body {
@@ -91,10 +99,11 @@
 
 <body>
     <div id="header">
-        <div class="block item flex">
-            <h1 class="title"><a href="/">feedline</a></h1>
+        <div class="item flex">
+            <h1><a href="/">feedline</a></h1>
             <ul class="flex">
-                {{ block "navigation" . }}{{ end }}
+                <ul><a href="/">Feed</a></ul>
+                <ul><a href="/subscriptions/">Subscriptions</a></ul>
             </ul>
         </div>
     </div>
@@ -102,6 +111,22 @@
         {{ block "content" . }}{{ end }}
     </div>
     <div id="spacer"></div>
+    {{ block "script" . }}{{ end }}
+    <script>
+        function markAsRead(url) {
+            var feed = document.querySelector("#feed");
+            fetch("/api/dismiss/?url=" + url, {
+                method: "POST"
+            });
+            var items = feed.querySelectorAll('#' + url);
+            for (let item of items) {
+                feed.removeChild(item);
+            }
+            if (!feed.childElementCount) {
+                refreshFeed();
+            }
+        }
+    </script>
 </body>
 
 </html>

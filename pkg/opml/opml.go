@@ -26,7 +26,7 @@ type Outline struct {
 // type Head struct {
 // }
 
-func Parse(byteData []byte) (*OPML, error) {
+func ParseBytes(byteData []byte) (*OPML, error) {
 	var opml OPML
 	err := xml.Unmarshal(byteData, &opml)
 	if err != nil {
@@ -36,6 +36,15 @@ func Parse(byteData []byte) (*OPML, error) {
 	return &opml, nil
 }
 
+func ParseFile(file *os.File) (*OPML, error) {
+	byteData, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return ParseBytes(byteData)
+}
+
 func Load(name string) (*OPML, error) {
 	file, err := os.Open(name)
 	if err != nil {
@@ -43,7 +52,5 @@ func Load(name string) (*OPML, error) {
 	}
 	defer file.Close()
 
-	byteData, _ := ioutil.ReadAll(file)
-
-	return Parse(byteData)
+	return ParseFile(file)
 }

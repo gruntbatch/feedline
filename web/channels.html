@@ -1,0 +1,12 @@
+{{ define "content" }}
+{{ range $_, $channel := . }}
+<div class="item flex">
+    <h2 class="hide-overflow">
+        <a href="/?url={{ $channel.SanitizedURL }}">
+            {{ $channel.Label }}
+        </a>
+    </h2>
+    <p></p>
+</div>
+{{ end }}
+{{ end }}

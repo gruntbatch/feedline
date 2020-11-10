@@ -1,0 +1,26 @@
+{{ define "content" }}
+{{ range $_, $item := . }}
+<div id="{{ $item.SanitizedURL }}" class="item flex">
+    <h2 class="hide-overflow">
+        <a href="{{ $item.URL }}" target="_blank" title="{{ $item.Label }}"
+            onclick="markAsRead('{{ $item.SanitizedURL}}'); return true;">
+            {{ $item.Label }}
+        </a>
+    </h2>
+    <h3 class="hide-overflow">
+        <i>
+            <a href="/?url={{ $item.ChannelInfo.SanitizedURL }}">
+                {{ $item.ChannelInfo.Label }}
+            </a>
+        </i>
+    </h3>
+    <p class="dismiss pointer" onclick="markAsRead('{{ $item.SanitizedURL}}');">Dismiss</p>
+</div>
+{{ end }}
+{{ end }}
+
+{{ define "script" }}
+<script>
+    setInterval(() => { location.reload(); }, 600000)
+</script>
+{{ end }}
