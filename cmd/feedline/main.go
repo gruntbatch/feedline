@@ -11,7 +11,10 @@ func main() {
 	addr := flag.String("addr", ":8080", "listen to this address")
 	flag.Parse()
 
-	go receiver.Refresh()
+	go func() {
+		receiver.Refresh()
+		receiver.TidyDismissed()
+	}()
 	go receiver.Listen()
 	server.Serve(*webDir, *addr)
 }

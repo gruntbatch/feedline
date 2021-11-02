@@ -99,3 +99,31 @@ func DismissBulletin(sanitizedURL string) {
 		}
 	}
 }
+
+func TidyDismissed() {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+
+	bulletins := make(map[string]bool)
+
+	for _, bulletin := range AllBulletins() {
+		bulletins[bulletin.SanitizedURL] = true
+	}
+
+	files, err := os.ReadDir(homeDir + "/.feedline/read/")
+	if err != nil {
+		panic(err)
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		} else {
+			if _, ok := bulletins[file.Name()]; !ok {
+				os.Remove(homeDir + "/.feedline/read/" + file.Name())
+			}
+		}
+	}
+}
