@@ -27,7 +27,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		bulletins = receiver.UnreadBulletins()
 	} else {
 		var err error
-		bulletins, err = receiver.UnreadBulletinsFromSanitizedURL(url)
+		bulletins, err = receiver.AllBulletinsFromSanitizedUrl(url)
 		if err != nil {
 			panic(err)
 		}
