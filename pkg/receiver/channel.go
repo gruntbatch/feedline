@@ -3,6 +3,8 @@ package receiver
 import (
 	"feedline/pkg/opml"
 	"os"
+	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -34,6 +36,11 @@ func AllChannels() []Channel {
 		})
 		linked = linked.next
 	}
+
+	sort.Slice(channels, func(i, j int) bool {
+		return strings.ToLower(channels[i].Label) <
+			strings.ToLower(channels[j].Label)
+	})
 
 	return channels
 }
