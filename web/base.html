@@ -13,7 +13,7 @@
             color: #111111;
             padding: 0;
             margin: 0;
-            font-family: sans-serif;
+            font-family: Avenir, sans-serif;
             font-weight: lighter;
             text-decoration: none;
             list-style: none;
@@ -23,7 +23,22 @@
             color: #aa0000;
         }
 
+        i {
+            padding-right: 0.12rem;
+        }
+
         h1 {
+            font-size: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+        }
+
+        h3 {
+            font-size: 1rem;
+        }
+
         @media (prefers-color-scheme: dark) {
             * {
                 background-color: #111111;
@@ -46,12 +61,11 @@
         #header {
             position: sticky;
             top: 0;
-            background: white;
         }
 
         #header>*,
         #feed>*:not(:last-child) {
-            border-bottom: 1px solid;
+            border-bottom: 1px solid #dddddd;
         }
 
         .hide-overflow {
@@ -75,7 +89,7 @@
 
         .item {
             box-sizing: border-box;
-            height: 5rem;
+            height: 4rem;
         }
 
         .message {
