@@ -2,10 +2,15 @@
 {{ range $_, $channel := . }}
 <div class="item flex">
     <h2 class="hide-overflow">
-        <a href="/?url={{ $channel.SanitizedURL }}">
+        <a href="/?url={{ $channel.SanitizedURL }}" class="{{ if ne $channel.Status 0 }}error{{ end }}">
             {{ $channel.Label }}
         </a>
     </h2>
+    {{ if ne $channel.Status 0 }}
+    <h3 class="hide-overflow error">
+        {{ $channel.Error }}
+    </h3>
+    {{ end }}
     <p></p>
 </div>
 {{ end }}

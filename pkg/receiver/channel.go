@@ -2,11 +2,12 @@ package receiver
 
 import (
 	"feedline/pkg/opml"
-	"github.com/kennygrant/sanitize"
-	"github.com/mmcdole/gofeed"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/kennygrant/sanitize"
+	"github.com/mmcdole/gofeed"
 )
 
 type ItemInfo struct {
@@ -17,6 +18,8 @@ type ItemInfo struct {
 
 type Channel struct {
 	ItemInfo
+	Status int
+	Error  string
 }
 
 func AllChannels() []Channel {
@@ -26,6 +29,8 @@ func AllChannels() []Channel {
 	for linked != nil {
 		channels = append(channels, Channel{
 			linked.Info,
+			linked.status,
+			linked.error,
 		})
 		linked = linked.next
 	}
@@ -36,6 +41,8 @@ func AllChannels() []Channel {
 type LinkedChannel struct {
 	mu        sync.RWMutex
 	next      *LinkedChannel
+	status    int
+	error     string
 	bulletins []Bulletin
 	Info      ItemInfo
 }
@@ -84,6 +91,8 @@ func linkOutline(outlines []opml.Outline, head *LinkedChannel) *LinkedChannel {
 			head = &LinkedChannel{
 				sync.RWMutex{},
 				head,
+				0,
+				"",
 				nil,
 				ItemInfo{o.Text, o.XMLURL, sanitize.BaseName(o.XMLURL)},
 			}
@@ -100,26 +109,34 @@ func (c *LinkedChannel) refresh() {
 
 	fp := gofeed.NewParser()
 	rss, err := fp.ParseURL(url)
-	if err != nil {
-		panic(err)
-	}
-
+	status := 0
+	error := ""
 	var bulletins []Bulletin
-	for _, item := range rss.Items {
-		date := time.Unix(0, 0)
-		if item.PublishedParsed != nil {
-			date = *item.PublishedParsed
-		} else if item.UpdatedParsed != nil {
-			date = *item.UpdatedParsed
+	if err != nil {
+		if herr, ok := err.(gofeed.HTTPError); ok {
+			status = herr.StatusCode
+			error = herr.Error()
+			bulletins = nil
 		}
-		bulletins = append(bulletins, Bulletin{
-			ItemInfo{item.Title, item.Link, sanitize.BaseName(item.Link)},
-			date,
-			c.Info,
-		})
+	} else {
+		for _, item := range rss.Items {
+			date := time.Unix(0, 0)
+			if item.PublishedParsed != nil {
+				date = *item.PublishedParsed
+			} else if item.UpdatedParsed != nil {
+				date = *item.UpdatedParsed
+			}
+			bulletins = append(bulletins, Bulletin{
+				ItemInfo{item.Title, item.Link, sanitize.BaseName(item.Link)},
+				date,
+				c.Info,
+			})
+		}
 	}
 
 	c.mu.Lock()
+	c.status = status
+	c.error = error
 	c.bulletins = bulletins
 	c.mu.Unlock()
 }
