@@ -3,6 +3,7 @@ package receiver
 import (
 	"errors"
 	"os"
+	"sort"
 	"time"
 )
 
@@ -22,6 +23,10 @@ func AllBulletins() []Bulletin {
 		head.mu.RUnlock()
 		head = head.next
 	}
+
+	sort.Slice(bulletins, func(i, j int) bool {
+		return bulletins[i].Date.After(bulletins[j].Date)
+	})
 
 	return bulletins
 }
