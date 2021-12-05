@@ -1,0 +1,17 @@
+{{ define "content" }}
+<div class="item flex">
+    <h2 class="pointer" onclick="tidy()">Tidy</h2>
+    <h3 class="comment">Calls the api function <span class="mono">/api/tidy/</span> to clean up entries in <span class="mono">~/.feedline/read/</span></h3>
+    <div></div>
+</div>
+{{ end }}
+
+{{ define "script" }}
+<script>
+    function tidy() {
+        fetch("/api/tidy/", {
+            method: "POST"
+        });
+    }
+</script>
+{{ end }}

@@ -14,9 +14,11 @@ var webDir string
 func Serve(_webDir string, addr string) {
 	webDir = _webDir
 	http.HandleFunc("/", handleIndex)
+	http.HandleFunc("/settings/", handleSettings)
 	http.HandleFunc("/subscriptions/", handleSubscriptions)
 	http.HandleFunc("/api/dismiss/", handleDismiss)
 	http.HandleFunc("/api/refresh/", handleRefresh)
+	http.HandleFunc("/api/tidy/", handleTidy)
 	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
@@ -53,12 +55,22 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleSettings(w http.ResponseWriter, r *http.Request) {
+	var t *template.Template
+	t = template.Must(template.ParseFiles(
+		path.Join(webDir, "base.html"),
+		path.Join(webDir, "settings.html")))
+	if err := t.Execute(w, nil); err != nil {
+		panic(err)
+	}
+}
+
 func handleSubscriptions(w http.ResponseWriter, r *http.Request) {
 	channels := receiver.AllChannels()
 
 	var t *template.Template
 	if len(channels) != 0 {
-		t := template.Must(template.ParseFiles(
+		t = template.Must(template.ParseFiles(
 			path.Join(webDir, "base.html"),
 			path.Join(webDir, "channels.html")))
 		if err := t.Execute(w, channels); err != nil {
@@ -82,4 +94,8 @@ func handleDismiss(w http.ResponseWriter, r *http.Request) {
 
 func handleRefresh(w http.ResponseWriter, r *http.Request) {
 	receiver.Refresh()
+}
+
+func handleTidy(w http.ResponseWriter, r *http.Request) {
+	receiver.TidyDismissed()
 }

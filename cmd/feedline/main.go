@@ -13,7 +13,6 @@ func main() {
 
 	go func() {
 		receiver.Refresh()
-		receiver.TidyDismissed()
 	}()
 	go receiver.Listen()
 	server.Serve(*webDir, *addr)
