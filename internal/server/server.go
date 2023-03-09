@@ -2,6 +2,7 @@ package server
 
 import (
 	"feedline/internal/message"
+	"feedline/internal/server/api"
 	"feedline/pkg/receiver"
 	"html/template"
 	"log"
@@ -16,9 +17,12 @@ func Serve(_webDir string, addr string) {
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/settings/", handleSettings)
 	http.HandleFunc("/subscriptions/", handleSubscriptions)
-	http.HandleFunc("/api/dismiss/", handleDismiss)
-	http.HandleFunc("/api/refresh/", handleRefresh)
-	http.HandleFunc("/api/tidy/", handleTidy)
+
+	http.HandleFunc("/api/dismiss/", api.Dismiss)
+	http.HandleFunc("/api/feed/", api.Feed)
+	http.HandleFunc("/api/refresh/", api.Refresh)
+	http.HandleFunc("/api/tidy/", api.Tidy)
+
 	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
@@ -85,17 +89,4 @@ func handleSubscriptions(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 	}
-}
-
-func handleDismiss(w http.ResponseWriter, r *http.Request) {
-	url := r.URL.Query().Get("url")
-	receiver.DismissBulletin(url)
-}
-
-func handleRefresh(w http.ResponseWriter, r *http.Request) {
-	receiver.Refresh()
-}
-
-func handleTidy(w http.ResponseWriter, r *http.Request) {
-	receiver.TidyDismissed()
 }
