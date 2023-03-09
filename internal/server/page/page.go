@@ -74,3 +74,7 @@ func Subscriptions(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func Static(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, path.Join(WebDir, r.URL.Path[1:]))
+}

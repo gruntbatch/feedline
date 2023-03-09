@@ -21,5 +21,7 @@ func Serve(webDir string, addr string) {
 	http.HandleFunc("/settings/", page.Settings)
 	http.HandleFunc("/subscriptions/", page.Subscriptions)
 
+	http.HandleFunc("/static/", page.Static)
+
 	log.Fatal(http.ListenAndServe(addr, nil))
 }
