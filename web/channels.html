@@ -1,16 +1,22 @@
 {{ define "content" }}
 {{ range $_, $channel := . }}
 <div class="item flex">
-    <h2 class="hide-overflow">
-        <a href="/?url={{ $channel.SanitizedURL }}" class="{{ if ne $channel.Status 0 }}error{{ end }}">
-            {{ $channel.Label }}
-        </a>
-    </h2>
-    {{ if ne $channel.Status 0 }}
-    <h3 class="hide-overflow error">
-        {{ $channel.Error }}
-    </h3>
-    {{ end }}
+    <div>
+        <h2 class="font-sans hide-overflow">
+            <a href="/?url={{ $channel.SanitizedURL }}" class="{{ if ne $channel.Status 0 }}error{{ end }}">
+                {{ $channel.Label }}
+            </a>
+        </h2>
+        {{ if eq $channel.Status 0 }}
+        <h3 class="font-sans comment hide-overflow">
+            {{ $channel.URL }}
+        </h3>
+        {{ else }}
+        <h3 class="hide-overflow error font-sans">
+            {{ $channel.Error }}
+        </h3>
+        {{ end }}
+    </div>
     <p></p>
 </div>
 {{ end }}

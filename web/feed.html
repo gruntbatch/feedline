@@ -1,20 +1,22 @@
 {{ define "content" }}
 {{ range $_, $item := . }}
 <div id="{{ $item.SanitizedURL }}" class="item flex">
-    <h2 class="hide-overflow">
-        <a href="{{ $item.URL }}" target="_blank" title="{{ $item.Label }}"
-            onclick="markAsRead('{{ $item.SanitizedURL}}'); return true;">
-            {{ $item.Label }}
-        </a>
-    </h2>
-    <h3 class="hide-overflow">
-        <i>
-            <a href="/?url={{ $item.ChannelInfo.SanitizedURL }}">
-                {{ $item.ChannelInfo.Label }}
+    <div>
+        <h2 class="font-sans hide-overflow">
+            <a href="{{ $item.URL }}" target="_blank" title="{{ $item.Label }}"
+                onclick="markAsRead('{{ $item.SanitizedURL}}'); return true;">
+                {{ $item.Label }}
             </a>
-        </i>
-    </h3>
-    <p class="dismiss pointer" onclick="markAsRead('{{ $item.SanitizedURL}}');">Dismiss</p>
+        </h2>
+        <h3 class="comment font-serif hide-overflow">
+            <i>
+                <a href="/?url={{ $item.ChannelInfo.SanitizedURL }}">
+                    {{ $item.ChannelInfo.Label }}
+                </a>
+            </i>
+        </h3>
+    </div>
+    <p class="dismiss pointer font-mono" onclick="markAsRead('{{ $item.SanitizedURL}}');">dismiss</p>
 </div>
 {{ end }}
 {{ end }}

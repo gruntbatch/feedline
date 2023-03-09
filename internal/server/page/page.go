@@ -76,5 +76,6 @@ func Subscriptions(w http.ResponseWriter, r *http.Request) {
 }
 
 func Static(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	http.ServeFile(w, r, path.Join(WebDir, r.URL.Path[1:]))
 }
