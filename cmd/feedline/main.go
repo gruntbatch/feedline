@@ -10,7 +10,7 @@ import (
 func main() {
 	webDir := flag.String("webdir", "./web", "load templates from this directory")
 	addr := flag.String("addr", ":8080", "listen to this address")
-	interval := flag.Duration("interval", time.Duration(10 * float64(time.Minute)), "time between refreshes")
+	interval := flag.Duration("interval", time.Duration(60 * float64(time.Minute)), "time between refreshes")
 	flag.Parse()
 
 	go func() {

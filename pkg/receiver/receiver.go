@@ -17,7 +17,6 @@ func Listen(interval time.Duration) {
 	// however, I'm not sure it needs to. As long as Refresh() doesn't perform
 	// any disk operations, I'm not sure there's anything to clean up.
 
-	// TODO Update at a user-configured time interval
 	ticker := time.NewTicker(interval)
 	for {
 		select {
